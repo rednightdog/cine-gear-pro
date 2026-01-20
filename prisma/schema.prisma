@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model EquipmentItem {
+  id             String   @id @default(cuid())
+  name           String
+  brand          String
+  model          String
+  category       String
+  subcategory    String?
+  description    String
+  daily_rate_est Int
+  
+  // Specs flattened for simplicity in SQLite, could be JSON
+  mount          String?
+  weight_kg      Float?
+  resolution     String?
+  focal_length   String?
+  aperture       String?
+  power_draw_w   Int?
+  sensor_size    String? // e.g. "36.70 x 25.54"
+  sensor_type    String? // e.g. "Full Frame"
+  image_circle_mm Int?   // For lenses, e.g. 30, 43, 46
+  
+  // New Lens Fields
+  close_focus_m    Float?
+  front_diameter_mm Int?
+  length_mm        Int?
+  squeeze          String? // e.g. "1.5x", "2x"
+  
+  // JSON string for detailed recording formats table
+  recordingFormats String?
+
+  // JSON string for deep technical datasheet (sections > key/value)
+  technicalData    String?
+
+  // JSON string for CineD Lab Bench data
+  labMetrics       String?
+
+  imageUrl       String?
+  
+  // New Support specs
+  payload_kg     Float?
+
+  // Catch-all for extra specs
+  specs_json     String? // JSON string
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  kitItems       KitItem[]
+}
+
+
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hashed
+  name      String?
+  jobTitle  String?
+  role      String   @default("USER") // "USER" or "ADMIN"
+  language  String   @default("TR") // "TR" or "EN"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  kits      Kit[]
+}
+
+model Kit {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  isPublic       Boolean  @default(false)
+  shareToken     String?  @unique @default(cuid()) 
+  projectDetails String?  // Stored as JSON string
+  
+  owner          User?    @relation(fields: [ownerId], references: [id])
+  ownerId        String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  items          KitItem[]
+}
+
+model KitItem {
+  id            String        @id @default(cuid())
+  kit           Kit           @relation(fields: [kitId], references: [id], onDelete: Cascade)
+  kitId         String
+  
+  // Standard Item Relation (Optional now)
+  equipment     EquipmentItem? @relation(fields: [equipmentId], references: [id])
+  equipmentId   String?
+
+  // Custom Item Fields (Used if equipment is null)
+  customName        String?
+  customBrand       String?
+  customCategory    String?
+  customDescription String?
+  
+  // General
+  notes         String?       // Notes for any item type
+  quantity      Int           @default(1)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
