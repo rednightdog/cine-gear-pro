@@ -47,8 +47,8 @@ export function EquipmentCard({ item, viewMode = 'grid' }: EquipmentCardProps) {
                 </Link>
 
                 {/* Main Info */}
-                <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                    <div className="col-span-1 md:col-span-2">
+                <div className="flex-1 min-w-0 flex flex-col md:grid md:grid-cols-4 gap-4 items-center">
+                    <div className="w-full md:col-span-2">
                         <div className="flex items-center gap-2">
                             <span className="inline-flex items-center border border-primary px-2 py-0.5 text-[10px] uppercase font-bold text-primary tracking-wider">
                                 {item.category}
@@ -61,7 +61,7 @@ export function EquipmentCard({ item, viewMode = 'grid' }: EquipmentCardProps) {
                     </div>
 
                     {/* Specs - Compact */}
-                    <div className="hidden md:flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 w-full md:w-auto">
                         {item.specs.mount && <SpecBadge label="Mount" value={item.specs.mount} />}
                         {item.specs.resolution && <SpecBadge label="Res" value={item.specs.resolution} />}
                     </div>

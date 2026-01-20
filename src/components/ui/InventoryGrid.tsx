@@ -207,7 +207,7 @@ export function InventoryGrid({ equipment, isAdmin }: { equipment: EquipmentItem
                             <label className="block text-sm font-medium mb-1.5">Item Name</label>
                             <input name="name" required className="w-full px-3 py-2 rounded-md border border-input bg-background focus:ring-2 focus:ring-primary/20 outline-none transition-all" placeholder="e.g. My Special Lens" autoFocus />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium mb-1.5">Brand</label>
                                 <input name="brand" className="w-full px-3 py-2 rounded-md border border-input bg-background focus:ring-2 focus:ring-primary/20 outline-none transition-all" placeholder="e.g. Handheld" />
