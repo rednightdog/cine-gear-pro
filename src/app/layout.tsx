@@ -32,6 +32,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false, // Feels more like native app
+  viewportFit: "cover",
 };
 
 import { KitProvider } from "@/context/KitContext";

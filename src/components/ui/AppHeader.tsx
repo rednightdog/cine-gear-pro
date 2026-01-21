@@ -22,10 +22,27 @@ export function AppHeader({ user }: AppHeaderProps) {
         setIsMobileMenuOpen(false);
     }, [pathname]);
 
-    if (isPrintView) return null;
+    useEffect(() => {
+        // Configure Status Bar for native app
+        const configStatusBar = async () => {
+            // Dynamic import to avoid SSR issues or check platform
+            const { StatusBar, Style } = await import('@capacitor/status-bar');
+            const { Capacitor } = await import('@capacitor/core');
+
+            if (Capacitor.isNativePlatform()) {
+                try {
+                    await StatusBar.setStyle({ style: Style.Light }); // Light style = Dark text (usually)
+                    await StatusBar.setOverlaysWebView({ overlay: true });
+                } catch (e) {
+                    console.error('Status bar error', e);
+                }
+            }
+        };
+        configStatusBar();
+    }, []);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-safe-or-fallback transition-all duration-200" style={{ paddingTop: 'max(env(safe-area-inset-top), 44px)' }}>
             <div className="container flex h-14 items-center justify-between px-6">
                 <Link href="/" className="flex items-center space-x-2 font-bold">
                     <img src="/header-logo.jpg" alt="CineBrain" className="h-10 w-auto object-contain" />
