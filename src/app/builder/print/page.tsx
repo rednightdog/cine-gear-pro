@@ -40,7 +40,10 @@ export default function PrintPage() {
     return (
         <div className={`min-h-screen bg-[#FDF5E6] text-[#1A1A1A] p-8 md:p-16 print:p-0 print:bg-[#FDF5E6] ${inter.className}`}>
             {/* Control Bar - Hidden in Print */}
-            <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md p-4 flex justify-between items-center border-b border-gray-200 print:hidden z-50">
+            <div
+                className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md px-4 pb-4 flex justify-between items-center border-b border-gray-200 print:hidden z-50 transition-all"
+                style={{ paddingTop: 'max(env(safe-area-inset-top) + 16px, 16px)' }}
+            >
                 <div className="font-medium text-sm">Visual Print Preview</div>
                 <div className="flex gap-4">
                     <Link href="/builder" className="text-sm hover:underline self-center">Back to Builder</Link>
