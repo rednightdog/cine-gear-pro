@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.cinegearpro.app',
-  appName: 'CineGear Pro',
+  appName: 'CineBrain Pro',
   webDir: 'out',
   server: {
     url: 'https://cine-gear-pro-kcot.vercel.app',
