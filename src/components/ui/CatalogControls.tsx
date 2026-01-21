@@ -30,12 +30,16 @@ export function CatalogControls({ isAdmin }: { isAdmin?: boolean }) {
 
     const handleCategoryChange = (category: string) => {
         const params = new URLSearchParams(searchParams);
+
+        // Reset specific filters when switching main category
+        params.delete('subcategory');
+        params.delete('format');
+
         if (category === 'All') {
             params.delete('category');
         } else {
             params.set('category', category);
         }
-        // Reset page if we were doing pagination (not yet implemented)
         replace(`/inventory?${params.toString()}`);
     };
 
@@ -82,6 +86,110 @@ export function CatalogControls({ isAdmin }: { isAdmin?: boolean }) {
                     </button>
                 ))}
             </div>
+
+            {/* Sub-Category Filter (Only for Lens) */}
+            {currentCategory === 'Lens' && (
+                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide text-xs animate-in fade-in slide-in-from-top-2 duration-300">
+                    {['All', 'Prime', 'Zoom', 'Anamorphic'].map((sub) => {
+                        const currentSub = searchParams.get('subcategory') || 'All';
+                        const isActive = currentSub === sub || (sub === 'All' && !searchParams.get('subcategory'));
+
+                        return (
+                            <button
+                                key={sub}
+                                onClick={() => {
+                                    const params = new URLSearchParams(searchParams);
+                                    if (sub === 'All') {
+                                        params.delete('subcategory');
+                                    } else {
+                                        params.set('subcategory', sub);
+                                    }
+                                    replace(`/inventory?${params.toString()}`);
+                                }}
+                                className={`
+                                    px-3 py-1.5 rounded-full border transition-all font-medium
+                                    ${isActive
+                                        ? 'bg-black text-white border-black'
+                                        : 'bg-transparent text-black/60 border-black/10 hover:border-black/30'
+                                    }
+                                `}
+                            >
+                                {sub}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* Sensor Format Filter (Lens & Camera) */}
+            {(currentCategory === 'Lens' || currentCategory === 'Camera') && (
+                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide text-xs animate-in fade-in slide-in-from-top-3 duration-300 delay-100">
+                    {['All', 'S35', 'FF', 'LF'].map((fmt) => {
+                        const currentFmt = searchParams.get('format') || 'All';
+                        // Handle strict selection logic for visual state
+                        const isActive = currentFmt === fmt || (fmt === 'All' && !searchParams.get('format'));
+
+                        return (
+                            <button
+                                key={fmt}
+                                onClick={() => {
+                                    const params = new URLSearchParams(searchParams);
+                                    if (fmt === 'All') {
+                                        params.delete('format');
+                                    } else {
+                                        params.set('format', fmt);
+                                    }
+                                    replace(`/inventory?${params.toString()}`);
+                                }}
+                                className={`
+                                    px-3 py-1.5 rounded-full border transition-all font-medium
+                                    ${isActive
+                                        ? 'bg-black text-white border-black'
+                                        : 'bg-transparent text-black/60 border-black/10 hover:border-black/30'
+                                    }
+                                `}
+                            >
+                                {fmt}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* Lighting Filters (Scoped) */}
+            {currentCategory === 'Lighting' && (
+                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide text-xs animate-in fade-in slide-in-from-top-3 duration-300">
+                    {['All', 'LED', 'Daylight', 'Tungsten', 'Ballast', 'Modifier', 'Accessory'].map((sub) => {
+                        const currentSub = searchParams.get('subcategory') || 'All';
+                        const isActive = currentSub === sub || (sub === 'All' && !searchParams.get('subcategory'));
+
+                        return (
+                            <button
+                                key={sub}
+                                onClick={() => {
+                                    const params = new URLSearchParams(searchParams);
+                                    if (sub === 'All') {
+                                        params.delete('subcategory');
+                                    } else {
+                                        params.set('subcategory', sub);
+                                    }
+                                    replace(`/inventory?${params.toString()}`);
+                                }}
+                                className={`
+                                    px-3 py-1.5 rounded-full border transition-all font-medium
+                                    ${isActive
+                                        ? 'bg-black text-white border-black'
+                                        : 'bg-transparent text-black/60 border-black/10 hover:border-black/30'
+                                    }
+                                `}
+                            >
+                                {sub}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
         </div>
     );
 }

@@ -97,11 +97,11 @@ export default async function SharedKitPage(props: PageProps) {
                         <div key={kitItem.id} className="flex py-3 border-b border-black/5 text-sm items-baseline">
                             <div className="w-16 font-mono text-lg">{kitItem.quantity}</div>
                             <div className="flex-1 pr-4">
-                                <span className="font-bold">{kitItem.equipment.brand}</span> <span className="italic">{kitItem.equipment.name}</span>
-                                <span className="block text-xs text-black/50 uppercase tracking-wider mt-0.5">{kitItem.equipment.category}</span>
+                                <span className="font-bold">{kitItem.equipment?.brand || 'Custom'}</span> <span className="italic">{kitItem.equipment?.name || (kitItem as any).customName}</span>
+                                <span className="block text-xs text-black/50 uppercase tracking-wider mt-0.5">{kitItem.equipment?.category || (kitItem as any).customCategory}</span>
                             </div>
                             <div className="w-32 text-xs italic text-black/60">
-                                {kitItem.equipment.description}
+                                {kitItem.equipment?.description || (kitItem as any).customDescription}
                                 {/* If we had per-item notes in kitItem, display here. Note: schema doesn't seem to have store separate kitItem notes in KitItem table? 
                                    Wait, schema has 'items' linking to 'KitItem'. Does 'KitItem' have notes? 
                                    Let's check schema quick or assume no for now. 

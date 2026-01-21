@@ -20,6 +20,7 @@ const lensData = [
         focal_length: '25mm',
         aperture: 'T2.0',
         image_circle_mm: 46,
+        sensor_coverage: 'FF',
         close_focus_m: 0.25,
         front_diameter_mm: 110,
         length_mm: 167,

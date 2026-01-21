@@ -11,7 +11,7 @@ const playfair = Playfair_Display({ subsets: ['latin'] });
 const inter = Inter({ subsets: ['latin'] });
 
 export default function PrintPage() {
-    const { items, projectDetails, totalDailyRate, showRates, notes } = useKit();
+    const { items, projectDetails, notes } = useKit();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -69,46 +69,51 @@ export default function PrintPage() {
                 </header>
 
                 {/* Project Details Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-16 border-b border-black/10 pb-8">
-                    <div>
-                        <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">Director</span>
-                        <span className={`${playfair.className} text-xl`}>{projectDetails.director || '—'}</span>
+                <div className="flex justify-between items-start mb-16 border-b border-black/10 pb-8">
+                    {/* Left Column: People */}
+                    <div className="flex flex-col gap-4">
+                        <div>
+                            <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">Director</span>
+                            <span className={`${playfair.className} text-base`}>{projectDetails.director || '—'}</span>
+                        </div>
+                        <div>
+                            <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">DoP</span>
+                            <span className={`${playfair.className} text-base`}>{projectDetails.dop || '—'}</span>
+                        </div>
+                        <div>
+                            <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">1st AC</span>
+                            <span className={`${playfair.className} text-base`}>{projectDetails.cameraAssistant || '—'}</span>
+                        </div>
                     </div>
-                    <div>
-                        <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">DoP</span>
-                        <span className={`${playfair.className} text-xl`}>{projectDetails.dop || '—'}</span>
-                    </div>
-                    <div>
-                        <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">1st AC</span>
-                        <span className={`${playfair.className} text-xl`}>{projectDetails.cameraAssistant || '—'}</span>
-                    </div>
-                    <div className="flex flex-col gap-6">
+
+                    {/* Right Column: Dates & Totals */}
+                    <div className="flex flex-col gap-4 text-left items-start">
                         <div>
                             <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">Shoot Date</span>
-                            <span className={`${playfair.className} text-xl`}>
+                            <span className={`${playfair.className} text-base whitespace-nowrap`}>
                                 {projectDetails.shootDateStart ? (
                                     <>
-                                        {new Date(projectDetails.shootDateStart).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
-                                        {projectDetails.shootDateEnd ? ` - ${new Date(projectDetails.shootDateEnd).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}
+                                        {new Date(projectDetails.shootDateStart).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                        {projectDetails.shootDateEnd ? ` - ${new Date(projectDetails.shootDateEnd).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}
                                     </>
                                 ) : dateStr}
                             </span>
                         </div>
                         <div>
                             <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">Test Date</span>
-                            <span className={`${playfair.className} text-xl`}>
+                            <span className={`${playfair.className} text-base whitespace-nowrap`}>
                                 {projectDetails.testDateStart ? (
                                     <>
-                                        {new Date(projectDetails.testDateStart).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
-                                        {projectDetails.testDateEnd ? ` - ${new Date(projectDetails.testDateEnd).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}` : ''}
+                                        {new Date(projectDetails.testDateStart).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
+                                        {projectDetails.testDateEnd ? ` - ${new Date(projectDetails.testDateEnd).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}` : ''}
                                     </>
                                 ) : '—'}
                             </span>
                         </div>
-                    </div>
-                    <div>
-                        <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">Total Items</span>
-                        <span className={`${playfair.className} text-xl`}>{items.length}</span>
+                        <div>
+                            <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-1">Total Items</span>
+                            <span className={`${playfair.className} text-base`}>{items.length}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -187,11 +192,7 @@ export default function PrintPage() {
                                             )}
                                         </div>
                                     </div>
-                                    {showRates && (
-                                        <div className="text-right w-24 text-sm font-mono pt-1 opacity-60">
-                                            ${(item.item.daily_rate_est * item.quantity).toLocaleString()}
-                                        </div>
-                                    )}
+
                                 </div>
                             ))}
                         </div>
@@ -200,12 +201,7 @@ export default function PrintPage() {
 
                 {/* Footer / Total */}
                 <div className="mt-16 flex justify-end items-end border-t border-black pt-8">
-                    {showRates && (
-                        <div className="text-right">
-                            <span className="block text-[10px] uppercase tracking-widest opacity-50 mb-2">Total Estimated Daily Rate</span>
-                            <span className={`${playfair.className} text-4xl`}>${totalDailyRate.toLocaleString()}</span>
-                        </div>
-                    )}
+
                 </div>
 
                 {/* Notes Block if exists */}

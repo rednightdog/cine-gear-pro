@@ -66,6 +66,7 @@ function mapPrismaToEquipment(item: any): EquipmentItem {
             front_diameter_mm: item.front_diameter_mm || undefined,
             length_mm: item.length_mm || undefined,
             squeeze: item.squeeze || undefined,
+            sensor_coverage: item.sensor_coverage || undefined,
 
             // New Support Data
             payload_kg: item.payload_kg || undefined,

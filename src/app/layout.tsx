@@ -42,7 +42,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { LanguageProvider } from "@/context/LanguageContext";
-import { CineBrainChat } from "@/components/ui/CineBrainChat";
+
 
 export default async function RootLayout({
   children,
@@ -59,12 +59,12 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${playfair.variable} ${inter.variable} font-sans antialiased`}
       >
         <ThemeProvider>
-          <LanguageProvider initialLanguage={user?.language || 'TR'}>
+          <LanguageProvider initialLanguage={user?.language || 'EN'}>
             <KitProvider>
               <div className="flex min-h-screen">
                 <div className="flex-1 w-full relative flex flex-col">
@@ -78,7 +78,6 @@ export default async function RootLayout({
                 </div>
                 {/* Collapsible Sidebar */}
                 <KitSidebar />
-                <CineBrainChat />
               </div>
             </KitProvider>
           </LanguageProvider>

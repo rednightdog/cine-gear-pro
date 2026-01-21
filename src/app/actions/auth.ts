@@ -50,6 +50,10 @@ export async function loginAction(prevState: any, formData: FormData) {
     }
 
     await createSession(user.id);
+    const callbackUrl = formData.get('callbackUrl') as string;
+    if (callbackUrl && callbackUrl.startsWith('/')) {
+        redirect(callbackUrl);
+    }
     redirect('/');
 }
 

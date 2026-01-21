@@ -2,7 +2,6 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { equipmentData } from './seed-data';
-// import { db } from '@/lib/db'; // In a real app, you might query the DB directly here.
 
 const apiKey = process.env.GEMINI_API_KEY;
 
@@ -15,7 +14,6 @@ const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
  */
 export async function processAiQuery(query: string): Promise<string> {
     if (!apiKey || !genAI) {
-        console.error("Missing API Key or GenAI instance");
         return "I'm not fully initialized yet (API Key missing). I can only give you simulated answers for now.";
     }
 
@@ -39,9 +37,9 @@ export async function processAiQuery(query: string): Promise<string> {
         const result = await model.generateContent(context);
         const response = await result.response;
         return response.text();
-    } catch (error) {
+    } catch (error: any) {
         console.error("Gemini AI Error:", error);
-        return "Sorry, I'm having trouble connecting to my brain right now. Please try again later.";
+        return `Error: ${error.message || "Failed to connect to AI."}`;
     }
 }
 

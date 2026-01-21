@@ -54,19 +54,7 @@ export function LensGroupCard({ items }: LensGroupCardProps) {
                 onClick={toggleExpand}
                 className="flex flex-col md:flex-row md:items-center gap-4 p-4 cursor-pointer hover:bg-secondary/5 transition-colors relative group"
             >
-                {/* Image */}
-                <div className="relative w-16 h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 border border-border">
-                    {firstItem.image_url ? (
-                        <Image
-                            src={firstItem.image_url}
-                            alt={model}
-                            fill
-                            className="object-cover"
-                        />
-                    ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-xs">O</div>
-                    )}
-                </div>
+                {/* Image Removed as per request */}
 
                 {/* Title & Info */}
                 <div className="flex-1 min-w-0">

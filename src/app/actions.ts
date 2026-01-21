@@ -68,7 +68,8 @@ export async function saveKit(
         notes?: string
     }[],
     projectDetails?: any,
-    description?: string // New argument for notes
+    description?: string,
+    kitId?: string
 ) {
     if (!items.length) {
         return { success: false, message: 'Kit is empty' };
@@ -77,50 +78,107 @@ export async function saveKit(
     const session = await getSession();
     const ownerId = session?.userId;
 
-    // If no owner, we technically can't save to a user "profile" if we enforce ownership.
-    // But schema says ownerId is optional? Yes.
-    // But for "User Records Saving" success, we need ownerId.
     if (!ownerId) {
         return { success: false, message: 'You must be logged in to save kits.' };
     }
 
     try {
-        const kit = await prisma.kit.create({
-            data: {
-                name: name || `Untitled Kit - ${new Date().toLocaleDateString()}`,
-                description: description || undefined, // Save the notes
-                ownerId: ownerId,
-                projectDetails: projectDetails ? JSON.stringify(projectDetails) : undefined,
-                items: {
-                    create: items.map(i => {
-                        // Check if it's a standard equipment item (has a real ID, not temp)
-                        const isStandardItem = i.item.id && !i.item.id.startsWith('custom-');
+        if (kitId) {
+            // Update existing kit
+            // 1. Verify ownership
+            const existingKit = await prisma.kit.findUnique({ where: { id: kitId } });
+            if (!existingKit) return { success: false, message: 'Kit not found' };
+            if (existingKit.ownerId !== ownerId) return { success: false, message: 'Unauthorized' };
 
-                        if (isStandardItem) {
-                            return {
-                                quantity: i.quantity,
-                                notes: i.notes,
-                                equipment: { connect: { id: i.item.id } }
-                            };
-                        } else {
-                            // Custom Item
-                            return {
-                                quantity: i.quantity,
-                                notes: i.notes,
+            // 2. Update Kit Details
+            await prisma.kit.update({
+                where: { id: kitId },
+                data: {
+                    name,
+                    description: description || undefined,
+                    projectDetails: projectDetails ? JSON.stringify(projectDetails) : undefined,
+                    updatedAt: new Date()
+                }
+            });
+
+            // 3. Replace Items (Transaction-like approach: Delete all, then Create)
+            await prisma.kitItem.deleteMany({ where: { kitId } });
+
+            // Use transaction to ensure all items are created safely, handling mixed types
+            await prisma.$transaction(
+                items.map(i => {
+                    const isStandardItem = i.item.id && !i.item.id.startsWith('custom-');
+                    const safeQuantity = parseInt(String(i.quantity)) || 1;
+
+                    if (isStandardItem) {
+                        return prisma.kitItem.create({
+                            data: {
+                                kitId: kitId!,
+                                quantity: safeQuantity,
+                                notes: i.notes || undefined,
+                                equipmentId: i.item.id
+                            } as any
+                        });
+                    } else {
+                        return prisma.kitItem.create({
+                            data: {
+                                kitId: kitId!,
+                                quantity: safeQuantity,
+                                notes: i.notes || undefined,
                                 customName: i.item.name || 'Custom Item',
                                 customBrand: i.item.brand || 'Generic',
                                 customCategory: i.item.category || 'Other',
                                 customDescription: i.item.description,
-                            } as any;
-                        }
-                    })
+                            } as any
+                        });
+                    }
+                })
+            );
+
+            revalidatePath('/dashboard');
+            return { success: true, kitId };
+
+        } else {
+            // Create New Kit
+            const kit = await prisma.kit.create({
+                data: {
+                    name: name || `Untitled Kit - ${new Date().toLocaleDateString()}`,
+                    description: description || undefined,
+                    ownerId: ownerId,
+                    projectDetails: projectDetails ? JSON.stringify(projectDetails) : undefined,
+                    items: {
+                        create: items.map(i => {
+                            // Check if it's a standard equipment item (has a real ID, not temp)
+                            const isStandardItem = i.item.id && !i.item.id.startsWith('custom-');
+                            const safeQuantity = parseInt(String(i.quantity)) || 1;
+
+                            if (isStandardItem) {
+                                return {
+                                    quantity: safeQuantity,
+                                    notes: i.notes || undefined,
+                                    equipment: { connect: { id: i.item.id } }
+                                } as any;
+                            } else {
+                                // Custom Item
+                                return {
+                                    quantity: safeQuantity,
+                                    notes: i.notes || undefined,
+                                    customName: i.item.name || 'Custom Item',
+                                    customBrand: i.item.brand || 'Generic',
+                                    customCategory: i.item.category || 'Other',
+                                    customDescription: i.item.description,
+                                } as any;
+                            }
+                        })
+                    }
                 }
-            }
-        });
-        return { success: true, kitId: kit.id };
-    } catch (error) {
+            });
+            revalidatePath('/dashboard');
+            return { success: true, kitId: kit.id };
+        }
+    } catch (error: any) {
         console.error('Failed to save kit:', error);
-        return { success: false, message: 'Database error' };
+        return { success: false, message: error.message || 'Database error' };
     }
 }
 

@@ -35,19 +35,7 @@ export default async function DashboardPage() {
                         <p className="text-muted-foreground mt-1">Manage your saved equipment lists and sharing settings.</p>
                     </div>
 
-                    {/* Admin Controls */}
-                    {user?.role === 'ADMIN' && (
-                        <div className="flex gap-2">
-                            <Link href="/admin/add" className="bg-black text-white px-4 py-2 rounded-md text-sm font-bold uppercase tracking-widest hover:bg-black/80 flex items-center gap-2">
-                                <Edit className="h-4 w-4" />
-                                Add Equipment
-                            </Link>
-                            {/* Placeholder for future User Management */}
-                            {/* <button className="bg-secondary text-secondary-foreground px-4 py-2 rounded-md text-sm font-bold uppercase tracking-widest hover:bg-secondary/80">
-                                Users
-                            </button> */}
-                        </div>
-                    )}
+
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

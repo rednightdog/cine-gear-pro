@@ -3,6 +3,8 @@ import { equipmentData } from '../src/lib/seed-data';
 import { seedLenses } from './seed-lenses';
 import { seedVantageLenses } from './seed-vantage';
 import { seedSupportItems } from './seed-support';
+import { seedLighting } from './seed-lighting';
+import { seedAlexaXtreme } from './seed-alexa-xtreme';
 
 const prisma = new PrismaClient();
 
@@ -52,6 +54,7 @@ async function main() {
                 front_diameter_mm: specs.front_diameter_mm,
                 length_mm: specs.length_mm,
                 squeeze: specs.squeeze,
+                sensor_coverage: specs.sensor_coverage,
 
                 // JSON Fields
                 recordingFormats: specs.recording_formats ? JSON.stringify(specs.recording_formats) : null,
@@ -64,6 +67,7 @@ async function main() {
     console.log(`Seeding finished.Added ${equipmentData.length} items.`);
 
     // Seed new lenses
+    await seedLighting();
     await seedLenses();
     await seedVantageLenses();
     await seedSupportItems();

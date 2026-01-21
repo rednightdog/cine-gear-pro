@@ -199,13 +199,25 @@ export default async function ProductDetailPage(props: PageProps) {
                                         <div className="p-3 border-b border-border bg-secondary/30">
                                             <h4 className="font-semibold text-foreground text-sm uppercase tracking-wide">{section.title}</h4>
                                         </div>
-                                        <div className="p-0">
-                                            {section.items.map((dataItem: any, i: number) => (
-                                                <div key={i} className={`flex flex-col sm:flex-row sm:justify-between sm:items-start p-3 text-sm border-b border-border/30 last:border-0 ${i % 2 === 0 ? 'bg-transparent' : 'bg-secondary/5'}`}>
-                                                    <span className="text-muted-foreground sm:w-1/3 mb-1 sm:mb-0 pr-4">{dataItem.label}</span>
-                                                    <span className="font-medium text-foreground sm:w-2/3 text-left sm:text-right whitespace-pre-line">{dataItem.value}</span>
+                                        <div className="flex flex-col md:flex-row">
+                                            <div className="flex-1 p-0">
+                                                {section.items.map((dataItem: any, i: number) => (
+                                                    <div key={i} className={`flex flex-col sm:flex-row sm:justify-between sm:items-start p-3 text-sm border-b border-border/30 last:border-0 ${i % 2 === 0 ? 'bg-transparent' : 'bg-secondary/5'}`}>
+                                                        <span className="text-muted-foreground sm:w-1/3 mb-1 sm:mb-0 pr-4">{dataItem.label}</span>
+                                                        <span className="font-medium text-foreground sm:w-2/3 text-left sm:text-right whitespace-pre-line">{dataItem.value}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {/* Technical Diagram/Image if present */}
+                                            {section.image_url && (
+                                                <div className="md:w-1/3 border-t md:border-t-0 md:border-l border-border/50 bg-white/5 p-4 flex items-center justify-center min-h-[150px]">
+                                                    <img
+                                                        src={section.image_url}
+                                                        alt={`${section.title} visual`}
+                                                        className="max-w-full max-h-60 object-contain drop-shadow-lg rounded-md"
+                                                    />
                                                 </div>
-                                            ))}
+                                            )}
                                         </div>
                                     </div>
                                 ))}

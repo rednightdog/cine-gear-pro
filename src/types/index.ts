@@ -16,6 +16,7 @@ export type LensMount = 'PL' | 'EF' | 'E-Mount' | 'LPL' | 'RF' | 'X-Mount' | 'MF
 export interface TechnicalDataSection {
     title: string;
     items: { label: string; value: string }[];
+    image_url?: string; // Optional diagram/photo for this section
 }
 
 export interface RecordingFormat {
@@ -49,6 +50,7 @@ export interface EquipmentItem {
         front_diameter_mm?: number;
         length_mm?: number;
         squeeze?: string;
+        sensor_coverage?: 'S35' | 'FF' | 'LF'; // New Field
 
         // Detailed Recording Formats
         recording_formats?: RecordingFormat[];

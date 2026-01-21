@@ -9,13 +9,14 @@ import { SpecBadge } from '@/components/ui/SpecBadge';
 
 import { getKit, saveKit } from '@/app/actions';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function BuilderPage() {
-    const { items, addItem, updateQuantity, removeItem, clearKit, totalDailyRate, showRates, toggleRates, notes, setNotes, updateItemNote, projectDetails, updateProjectDetail, addItems } = useKit();
+    const { items, addItem, updateQuantity, removeItem, clearKit, notes, setNotes, updateItemNote, projectDetails, updateProjectDetail, addItems } = useKit();
     const router = useRouter();
     const searchParams = useSearchParams();
     const kitId = searchParams.get('kitId');
+    const [isExporting, setIsExporting] = useState(false);
 
     // Load kit data if kitId is present
     useEffect(() => {
@@ -42,7 +43,42 @@ export default function BuilderPage() {
 
                 if (res.kit.items) {
                     res.kit.items.forEach((kitItem: any) => {
-                        addItem(kitItem.equipment, kitItem.quantity);
+                        // If it has a related equipment item, use that but ensure specs is populated
+                        if (kitItem.equipment) {
+                            // Re-construct the item object as the app expects it (EquipmentItem type)
+                            // Standard items from DB have flattened specs, we need to nest them back into 'specs'
+                            const itemWithSpecs = {
+                                ...kitItem.equipment,
+                                specs: {
+                                    mount: kitItem.equipment.mount,
+                                    weight_kg: kitItem.equipment.weight_kg,
+                                    resolution: kitItem.equipment.resolution,
+                                    focal_length: kitItem.equipment.focal_length,
+                                    aperture: kitItem.equipment.aperture,
+                                    sensor_size: kitItem.equipment.sensor_size,
+                                    close_focus_m: kitItem.equipment.close_focus_m,
+                                    front_diameter_mm: kitItem.equipment.front_diameter_mm,
+                                    length_mm: kitItem.equipment.length_mm,
+                                    squeeze: kitItem.equipment.squeeze,
+                                    payload_kg: kitItem.equipment.payload_kg,
+                                }
+                            };
+                            addItem(itemWithSpecs, kitItem.quantity, kitItem.notes);
+                        } else {
+                            // Reconstruct Custom Item
+                            const customItem = {
+                                id: 'custom-' + Math.random().toString(36).substr(2, 9), // Generate temp ID if needed or just use kitItem.id? Using temp for now to match flow
+                                name: kitItem.customName || 'Custom Item',
+                                brand: kitItem.customBrand || '',
+                                category: kitItem.customCategory || 'Other',
+                                description: kitItem.customDescription || '',
+                                daily_rate_est: 0,
+                                imageUrl: '/equipment/default-placeholder.png',
+                                model: 'Custom',
+                                specs: {} // Important: Initialize empty specs
+                            };
+                            addItem(customItem, kitItem.quantity, kitItem.notes);
+                        }
                     });
                 }
             } else {
@@ -67,6 +103,10 @@ export default function BuilderPage() {
     };
 
     const handleExportPDF = async () => {
+        setIsExporting(true);
+        // Small delay to allow UI to update
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         const doc = new jsPDF();
 
         // Helper to load font
@@ -188,9 +228,7 @@ export default function BuilderPage() {
 
         // Prep Columns
         const headers = ['Category', 'Description', 'Mount', 'Qty'];
-        if (showRates) {
-            headers.push('Unit Rate', 'Total');
-        }
+
 
         // Table Data
         const tableData = items.map(kitItem => {
@@ -208,12 +246,6 @@ export default function BuilderPage() {
                 // @ts-ignore
                 quantity
             ];
-            if (showRates) {
-                row.push(
-                    `$${item.daily_rate_est}`,
-                    `$${item.daily_rate_est * quantity}`
-                );
-            }
             return row;
         });
 
@@ -245,27 +277,17 @@ export default function BuilderPage() {
             columnStyles: {
                 1: { cellWidth: 'auto', minCellWidth: 60 }, // Give description more room
                 0: { fontStyle: 'bold' },
-                [headers.length - 1]: showRates ? { halign: 'right' } : {}
+
             }
         });
 
         const finalY = (doc as any).lastAutoTable.finalY + 10;
 
-        // Show Total only if rates are enabled
-        if (showRates) {
-            doc.setDrawColor(0);
-            doc.setLineWidth(0.5);
-            doc.line(14, finalY, 196, finalY);
 
-            doc.setFontSize(12);
-            doc.setTextColor(0);
-            doc.setFont('Roboto', 'bold');
-            doc.text(`Total Daily Rate: $${totalDailyRate.toLocaleString()}`, 196, finalY + 8, { align: 'right' });
-        }
 
         // Notes Section
         if (notes.trim()) {
-            const notesY = showRates ? finalY + 20 : finalY + 10;
+            const notesY = finalY + 10;
             doc.setFontSize(14);
             doc.setFont('Roboto', 'bold');
             doc.text('Notes / Remarks:', 14, notesY);
@@ -283,7 +305,15 @@ export default function BuilderPage() {
         doc.setFont('Roboto', 'normal');
         doc.text('Generated by CineGear Pro', 14, 285);
 
-        doc.save('equipment-list.pdf');
+        // Mobile-friendly save/open
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            const blob = doc.output('blob');
+            window.open(URL.createObjectURL(blob), '_blank');
+        } else {
+            doc.save('equipment-list.pdf');
+        }
+
+        setIsExporting(false);
     };
 
     if (items.length === 0) {
@@ -314,7 +344,7 @@ export default function BuilderPage() {
                         <span className="block text-xs font-mono uppercase tracking-widest text-muted-foreground mb-2">Workspace</span>
                         <h1 className="text-5xl font-serif italic tracking-tight">Kit Builder</h1>
                     </div>
-                    <div className="flex gap-6 text-sm font-medium">
+                    <div className="flex flex-wrap gap-4 text-sm font-medium">
                         <Link
                             href="/inventory"
                             className="bg-secondary text-foreground px-4 py-2 rounded-sm hover:bg-secondary/80 transition-colors uppercase tracking-widest text-xs flex items-center gap-2"
@@ -335,9 +365,10 @@ export default function BuilderPage() {
                         </button>
                         <button
                             onClick={handleExportPDF}
-                            className="text-foreground hover:opacity-50 transition-opacity uppercase tracking-widest text-xs"
+                            disabled={isExporting}
+                            className="text-foreground hover:opacity-50 transition-opacity uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-wait"
                         >
-                            Standard PDF
+                            {isExporting ? 'Exporting...' : 'Download PDF'}
                         </button>
                         <Link
                             href="/builder/print"
@@ -460,20 +491,9 @@ export default function BuilderPage() {
                                 <span className="font-serif text-xl">{items.length}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-mono uppercase tracking-widest">Show Rates</span>
-                                <button
-                                    onClick={toggleRates}
-                                    className={`w-8 h-4 rounded-full transition-colors relative ${showRates ? 'bg-black' : 'bg-black/20'}`}
-                                >
-                                    <span className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showRates ? 'translate-x-4' : 'translate-x-0'}`} />
-                                </button>
+                                <span className="text-xs font-mono uppercase tracking-widest">Total Items</span>
+                                <span className="font-serif text-xl">{items.length}</span>
                             </div>
-                            {showRates && (
-                                <div className="pt-4 border-t border-black/10 mt-4">
-                                    <span className="block text-xs font-mono uppercase tracking-widest mb-1">Total Daily</span>
-                                    <span className="block font-serif text-3xl italic">${totalDailyRate.toLocaleString()}</span>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -484,7 +504,7 @@ export default function BuilderPage() {
                         // Grouping Logic matching KitSidebar but for main Builder view
                         const groups = new Map<string, {
                             items: any[],
-                            totalRate: number
+
                         }>();
                         const singles: any[] = [];
 
@@ -495,12 +515,12 @@ export default function BuilderPage() {
                                 if (!groups.has(key)) {
                                     groups.set(key, {
                                         items: [],
-                                        totalRate: 0
+
                                     });
                                 }
                                 const group = groups.get(key)!;
                                 group.items.push(kitItem);
-                                group.totalRate += (item.daily_rate_est * kitItem.quantity);
+
                             } else {
                                 singles.push(kitItem);
                             }
@@ -538,7 +558,7 @@ export default function BuilderPage() {
                                         </div>
                                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mb-2">
                                             <span>{item.category}</span>
-                                            {item.specs.mount && <span>mount: {item.specs.mount}</span>}
+                                            {item.specs?.mount && <span>mount: {item.specs.mount}</span>}
                                             {item.specs.weight_kg && <span>{item.specs.weight_kg}kg</span>}
                                         </div>
                                         <input
@@ -552,11 +572,7 @@ export default function BuilderPage() {
 
                                     {/* Rate/Remove */}
                                     <div className="flex items-center gap-6 w-48 justify-end">
-                                        {showRates && (
-                                            <div className="text-right">
-                                                <div className="font-serif text-lg">${(item.daily_rate_est * quantity).toLocaleString()}</div>
-                                            </div>
-                                        )}
+
                                         <button
                                             onClick={() => removeItem(item.id)}
                                             className="text-black/20 hover:text-destructive transition-colors uppercase tracking-widest text-[10px]"
@@ -568,7 +584,7 @@ export default function BuilderPage() {
                             );
                         };
 
-                        const renderGroup = (key: string, group: { items: any[], totalRate: number }) => {
+                        const renderGroup = (key: string, group: { items: any[] }) => {
                             // Sort by focal length logic
                             const sortedGroupItems = [...group.items].sort((a, b) => {
                                 const getVal = (s?: string) => parseInt(s?.replace(/\D/g, '') || '0');
@@ -609,12 +625,7 @@ export default function BuilderPage() {
 
                                         {/* Rate */}
                                         <div className="flex items-center gap-6 w-48 justify-end self-start">
-                                            {showRates && (
-                                                <div className="text-right">
-                                                    <div className="font-serif text-lg">${group.totalRate.toLocaleString()}</div>
-                                                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Set Total</div>
-                                                </div>
-                                            )}
+
                                         </div>
                                     </div>
                                 </div>

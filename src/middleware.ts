@@ -3,37 +3,33 @@ import type { NextRequest } from 'next/server';
 import { decrypt } from '@/lib/session';
 import { cookies } from 'next/headers';
 
+// 1. Specify protected and public routes
+const protectedRoutes = ['/dashboard', '/profile', '/admin', '/builder'];
+const publicRoutes = ['/login', '/register', '/', '/inventory']; // builder was protected but let's allow public access? User said "Project Management" later. Let's protect builder for now as it will save projects. Inventory is public.
+
 export default async function middleware(req: NextRequest) {
+    // 2. Check if the current route is protected or public
     const path = req.nextUrl.pathname;
+    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+    const isPublicRoute = publicRoutes.includes(path);
 
-    // 1. Define Public Routes (Always accessible)
-    // 1. Define Public Routes (Always accessible)
-    const publicRoutes = ['/login', '/register'];
-    const isPublicRoute = publicRoutes.includes(path) || path.startsWith('/share/');
+    // 3. Decrypt the session from the cookie
+    const cookieStore = await cookies();
+    const cookie = cookieStore.get('session')?.value;
+    const session = await decrypt(cookie);
 
-    // 2. Decrypt Session
-    const cookie = (await cookies()).get('session')?.value;
-    let session = null;
-    if (cookie) {
-        try {
-            session = await decrypt(cookie);
-        } catch (e) {
-            // invalid token
-        }
+    // 4. Redirect to /login if the user is not authenticated
+    if (isProtectedRoute && !session?.userId) {
+        const url = new URL('/login', req.nextUrl);
+        url.searchParams.set('callbackUrl', encodeURIComponent(req.url));
+        return NextResponse.redirect(url);
     }
 
-    // 3. Logic:
-    // If user is ON a public route (login/register) AND is logged in -> Redirect to Home
-    if (isPublicRoute && session?.userId) {
-        return NextResponse.redirect(new URL('/', req.nextUrl));
+    // 5. Redirect to /dashboard if the user is authenticated and is visiting login or register
+    if (isPublicRoute && session?.userId && (path === '/login' || path === '/register')) {
+        return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
     }
 
-    // If user is NOT on a public route AND is NOT logged in -> Redirect to Login
-    if (!isPublicRoute && !session?.userId) {
-        return NextResponse.redirect(new URL('/login', req.nextUrl));
-    }
-
-    // Otherwise, allow
     return NextResponse.next();
 }
 

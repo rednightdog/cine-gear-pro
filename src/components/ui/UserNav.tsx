@@ -40,7 +40,7 @@ export function UserNav({ user }: { user: any }) {
                     >
                         <User className="h-4 w-4" />
                     </Link>
-                    <form action={logoutAction}>
+                    <form action={logoutAction} suppressHydrationWarning>
                         <button type="submit" className="text-muted-foreground hover:text-destructive transition-colors p-2" title={t.nav.logout}>
                             <LogOut className="h-4 w-4" />
                         </button>

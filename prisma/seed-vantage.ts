@@ -22,7 +22,7 @@ const vantageLensData = [
         close_focus_m: 0.8,
         front_diameter_mm: 120,
         length_mm: 140,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -42,7 +42,7 @@ const vantageLensData = [
         close_focus_m: 0.8,
         front_diameter_mm: 120,
         length_mm: 173,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -62,7 +62,7 @@ const vantageLensData = [
         close_focus_m: 0.6,
         front_diameter_mm: 120,
         length_mm: 145,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -82,7 +82,7 @@ const vantageLensData = [
         close_focus_m: 0.6,
         front_diameter_mm: 120,
         length_mm: 145,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -102,7 +102,7 @@ const vantageLensData = [
         close_focus_m: 0.8,
         front_diameter_mm: 120,
         length_mm: 137,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -122,7 +122,7 @@ const vantageLensData = [
         close_focus_m: 1.0,
         front_diameter_mm: 104,
         length_mm: 159,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -142,7 +142,7 @@ const vantageLensData = [
         close_focus_m: 1.0,
         front_diameter_mm: 104,
         length_mm: 154,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -162,7 +162,7 @@ const vantageLensData = [
         close_focus_m: 1.0,
         front_diameter_mm: 104,
         length_mm: 156,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -182,7 +182,7 @@ const vantageLensData = [
         close_focus_m: 1.0,
         front_diameter_mm: 104,
         length_mm: 160,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -202,7 +202,7 @@ const vantageLensData = [
         close_focus_m: 1.0,
         front_diameter_mm: 104,
         length_mm: 185,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -222,7 +222,7 @@ const vantageLensData = [
         close_focus_m: 1.0,
         front_diameter_mm: 104,
         length_mm: 200,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
     {
@@ -242,7 +242,7 @@ const vantageLensData = [
         close_focus_m: 1.0,
         front_diameter_mm: 104,
         length_mm: 220,
-        squeeze: '1.3x',
+        sensor_coverage: 'S35', squeeze: '1.3x',
         technicalData: { "Series": "V-Lite 1.3x" }
     },
 
@@ -264,7 +264,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 0.75,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     {
@@ -283,7 +283,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 0.75, // Updated
         front_diameter_mm: 156, // Updated
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     {
@@ -302,7 +302,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 0.73,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     {
@@ -321,7 +321,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 0.58,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     {
@@ -340,7 +340,7 @@ const vantageLensData = [
         aperture: 'T3.0',
         close_focus_m: 0.35,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus", "Feature": "Super Close Focus" }
     },
     {
@@ -359,7 +359,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 0.60,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     {
@@ -378,7 +378,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 0.60,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     {
@@ -397,7 +397,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 0.98,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     {
@@ -416,7 +416,7 @@ const vantageLensData = [
         aperture: 'T3.5',
         close_focus_m: 0.42,
         front_diameter_mm: 125,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus", "Feature": "Super Close Focus" }
     },
     {
@@ -435,7 +435,7 @@ const vantageLensData = [
         aperture: 'T3.0',
         close_focus_m: 0.98,
         front_diameter_mm: 135, // Larger front likely
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "V-Plus" }
     },
     // --- Hawk C-Series (Vintage feel) ---
@@ -455,7 +455,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 1.0,
         front_diameter_mm: 110,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "C-Series" }
     },
     {
@@ -474,7 +474,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 1.0,
         front_diameter_mm: 110,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "C-Series" }
     },
     {
@@ -493,7 +493,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 1.0,
         front_diameter_mm: 110,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "C-Series" }
     },
     {
@@ -512,7 +512,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 1.0,
         front_diameter_mm: 110,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "C-Series" }
     },
     {
@@ -531,7 +531,7 @@ const vantageLensData = [
         aperture: 'T2.2',
         close_focus_m: 1.0,
         front_diameter_mm: 110,
-        squeeze: '2x',
+        sensor_coverage: 'S35', squeeze: '2x',
         technicalData: { "Series": "C-Series" }
     },
 
@@ -552,7 +552,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.25, // Est
         front_diameter_mm: 110,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-21',
@@ -570,7 +570,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.25,
         front_diameter_mm: 110,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-25',
@@ -588,7 +588,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.25,
         front_diameter_mm: 110,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-32',
@@ -606,7 +606,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.30,
         front_diameter_mm: 110,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-40',
@@ -624,7 +624,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.35,
         front_diameter_mm: 110,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-50',
@@ -642,7 +642,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.45,
         front_diameter_mm: 110,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-65',
@@ -660,7 +660,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.6, // Est
         front_diameter_mm: 110,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-90',
@@ -678,7 +678,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.7, // Est
         front_diameter_mm: 128,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     },
     {
         id: 'hawk-one-120',
@@ -696,7 +696,7 @@ const vantageLensData = [
         aperture: 'T1.0',
         close_focus_m: 0.9, // Est
         front_diameter_mm: 156,
-        technicalData: { "Series": "Hawk One" }
+        sensor_coverage: 'S35', technicalData: { "Series": "Hawk One" }
     }
 ];
 

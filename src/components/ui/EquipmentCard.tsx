@@ -3,7 +3,7 @@
 import { useKit } from '@/context/KitContext';
 import { EquipmentItem } from '@/types';
 import { SpecBadge } from './SpecBadge';
-import { Plus, Check } from 'lucide-react';
+import { Plus, Check, Minus } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -13,8 +13,11 @@ interface EquipmentCardProps {
 }
 
 export function EquipmentCard({ item, viewMode = 'grid' }: EquipmentCardProps) {
-    const { addItem } = useKit();
+    const { addItem, items, updateQuantity } = useKit();
     const [isAdded, setIsAdded] = useState(false);
+
+    const existingItem = items.find(i => i.item.id === item.id);
+    const quantity = existingItem ? existingItem.quantity : 0;
 
     const handleAdd = (e: React.MouseEvent) => {
         e.preventDefault(); // Stop Link propagation
@@ -25,24 +28,56 @@ export function EquipmentCard({ item, viewMode = 'grid' }: EquipmentCardProps) {
 
     if (viewMode === 'list-minimal') {
         return (
-            <button
-                onClick={handleAdd}
-                className={`inline-flex items-center justify-center rounded-sm px-3 py-1 text-xs font-medium transition-colors uppercase tracking-wider ${isAdded ? 'bg-green-600 text-white' : 'bg-primary text-primary-foreground hover:bg-black hover:text-white'}`}
-            >
-                {isAdded ? (
-                    <>Added <Check className="ml-1 h-3 w-3" /></>
-                ) : (
-                    <>Add <Plus className="ml-1 h-3 w-3" /></>
-                )}
-            </button>
+            quantity > 0 ? (
+                <div className="inline-flex items-center bg-transparent border border-black/20 rounded-sm">
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            updateQuantity(item.id, -1);
+                        }}
+                        className="px-2 py-1 text-black hover:bg-black/10 transition-colors"
+                    >
+                        <Minus size={10} />
+                    </button>
+                    <span className="px-1 text-xs font-mono min-w-[2ch] text-center">{quantity}</span>
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addItem(item);
+                            setIsAdded(true);
+                            setTimeout(() => setIsAdded(false), 1000);
+                        }}
+                        className="px-2 py-1 text-black hover:bg-black/10 transition-colors"
+                    >
+                        <Plus size={10} />
+                    </button>
+                </div>
+            ) : (
+                <button
+                    onClick={handleAdd}
+                    className={`inline-flex items-center justify-center rounded-sm px-3 py-1 text-xs font-medium transition-colors uppercase tracking-wider relative ${isAdded ? 'bg-green-600 text-white' : 'bg-primary text-primary-foreground hover:bg-black hover:text-white'}`}
+                >
+                    {isAdded ? (
+                        <>Added <Check className="ml-1 h-3 w-3" /></>
+                    ) : (
+                        <>Add <Plus className="ml-1 h-3 w-3" /></>
+                    )}
+                </button>
+            )
         );
+
     }
 
     if (viewMode === 'list') {
         return (
-            <div className="group flex items-center gap-4 p-4 border-b border-border bg-card hover:bg-secondary/30 transition-all">
-                {/* Visual / Icon - Removed per minimalist request, kept structure just in case but made invisible or text only if needed */}
-                <Link href={`/inventory/${item.id}`} className="h-16 w-16 bg-secondary/50 flex items-center justify-center flex-shrink-0 transition-opacity hover:opacity-80 border border-border/20">
+            <div className={`group flex items-center gap-4 p-4 border-b border-border transition-all ${quantity > 0 ? 'bg-primary/5' : 'bg-card hover:bg-secondary/30'}`}>
+                {/* Visual / Icon */}
+                <Link href={`/inventory/${item.id}`} className="h-16 w-16 bg-secondary/50 flex items-center justify-center flex-shrink-0 transition-opacity hover:opacity-80 border border-border/20 relative">
+                    {quantity > 0 && (
+                        <span className="absolute top-0 right-0 flex h-6 w-6 transform translate-x-1/3 -translate-y-1/3 items-center justify-center rounded-full bg-black text-white text-xs font-bold shadow-sm z-10">
+                            {quantity}
+                        </span>
+                    )}
                     <div className="text-xl font-serif italic text-muted-foreground">{item.brand.charAt(0)}</div>
                 </Link>
 
@@ -67,26 +102,49 @@ export function EquipmentCard({ item, viewMode = 'grid' }: EquipmentCardProps) {
                     </div>
 
                     {/* Rate */}
-                    <div className="text-right">
-                        <span className="text-sm font-bold text-foreground block">${item.daily_rate_est}</span>
-                        <span className="text-[10px] text-muted-foreground">per day</span>
-                    </div>
+
                 </div>
 
                 {/* Actions */}
-                <button
-                    onClick={handleAdd}
-                    className={`h-10 w-10 flex items-center justify-center border transition-all ${isAdded ? 'bg-green-600 border-green-600 text-white' : 'bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground border-border'}`}
-                    title="Add to Kit"
-                >
-                    {isAdded ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
-                </button>
+                {quantity > 0 ? (
+                    <div className="flex items-center bg-black/5 rounded-sm overflow-hidden h-10 border border-black/10">
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                updateQuantity(item.id, -1);
+                            }}
+                            className="h-full px-3 hover:bg-black/10 transition-colors border-r border-black/10 flex items-center justify-center"
+                        >
+                            <Minus size={14} />
+                        </button>
+                        <span className="px-3 font-mono text-sm min-w-[3ch] text-center">{quantity}</span>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                addItem(item);
+                                setIsAdded(true);
+                                setTimeout(() => setIsAdded(false), 1000);
+                            }}
+                            className="h-full px-3 hover:bg-black/10 transition-colors border-l border-black/10 flex items-center justify-center"
+                        >
+                            <Plus size={14} />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={handleAdd}
+                        className={`h-10 w-10 flex items-center justify-center border transition-all ${isAdded ? 'bg-green-600 border-green-600 text-white' : 'bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground border-border'}`}
+                        title="Add to Kit"
+                    >
+                        {isAdded ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+                    </button>
+                )}
             </div>
         );
     }
 
     return (
-        <div className="group relative flex flex-col overflow-hidden border border-border bg-card transition-all hover:shadow-lg hover:shadow-primary/5">
+        <div className={`group relative flex flex-col overflow-hidden border transition-all hover:shadow-lg hover:shadow-primary/5 ${quantity > 0 ? 'border-primary/50 ring-1 ring-primary/20 bg-primary/5' : 'border-border bg-card'}`}>
             {/* Visual Header / Image Placeholder */}
             <Link href={`/inventory/${item.id}`} className="block relative aspect-video w-full bg-[#f0ede6] p-4 flex items-center justify-center transition-opacity hover:opacity-90 overflow-hidden border-b border-border">
                 {item.image_url ? (
@@ -100,11 +158,22 @@ export function EquipmentCard({ item, viewMode = 'grid' }: EquipmentCardProps) {
                         {item.brand}
                     </div>
                 )}
+
+                {/* Category Badge */}
                 <div className="absolute top-3 right-3">
                     <span className="inline-flex items-center bg-black/80 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
                         {item.category}
                     </span>
                 </div>
+
+                {/* Selected Quantity Badge */}
+                {quantity > 0 && (
+                    <div className="absolute top-3 left-3 animate-in zoom-in duration-200">
+                        <span className="inline-flex items-center bg-green-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-md">
+                            {quantity} IN KIT
+                        </span>
+                    </div>
+                )}
             </Link>
 
             {/* Content */}
@@ -151,21 +220,48 @@ export function EquipmentCard({ item, viewMode = 'grid' }: EquipmentCardProps) {
                 </div>
 
                 <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/50">
-                    <div className="flex flex-col">
-                        <span className="text-[10px] uppercase text-muted-foreground tracking-wider">Est. Daily</span>
-                        <span className="text-lg font-bold text-foreground font-mono">${item.daily_rate_est}</span>
-                    </div>
 
-                    <button
-                        onClick={handleAdd}
-                        className={`inline-flex items-center justify-center px-4 py-2 text-sm font-bold transition-all uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-card active:scale-95 transform ${isAdded ? 'bg-green-600 text-white hover:opacity-100' : 'bg-primary hover:opacity-90 text-primary-foreground focus:ring-primary/50'}`}
-                    >
-                        {isAdded ? (
-                            <><Check className="mr-2 h-4 w-4" /> Added</>
+
+                    <div className="flex items-center gap-2">
+                        {quantity > 0 ? (
+                            <div className="flex items-center bg-black rounded-sm overflow-hidden border border-black">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        updateQuantity(item.id, -1);
+                                    }}
+                                    className="px-3 py-2 text-white hover:bg-white/20 transition-colors"
+                                >
+                                    <Minus size={14} />
+                                </button>
+                                <span className="px-2 py-2 text-white font-mono text-sm min-w-[3ch] text-center border-l border-r border-white/20">
+                                    {quantity}
+                                </span>
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        addItem(item);
+                                        setIsAdded(true);
+                                        setTimeout(() => setIsAdded(false), 1000);
+                                    }}
+                                    className="px-3 py-2 text-white hover:bg-white/20 transition-colors"
+                                >
+                                    <Plus size={14} />
+                                </button>
+                            </div>
                         ) : (
-                            <><Plus className="mr-2 h-4 w-4" /> Add</>
+                            <button
+                                onClick={handleAdd}
+                                className={`inline-flex items-center justify-center px-4 py-2 text-sm font-bold transition-all uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-card active:scale-95 transform ${isAdded ? 'bg-green-600 text-white hover:opacity-100' : 'bg-primary hover:opacity-90 text-primary-foreground focus:ring-primary/50'}`}
+                            >
+                                {isAdded ? (
+                                    <><Check className="mr-2 h-4 w-4" /> Added</>
+                                ) : (
+                                    <><Plus className="mr-2 h-4 w-4" /> Add</>
+                                )}
+                            </button>
                         )}
-                    </button>
+                    </div>
                 </div>
             </div>
         </div>

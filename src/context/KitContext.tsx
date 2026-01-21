@@ -17,7 +17,7 @@ export interface ProjectDetails {
 
 interface KitContextType {
     items: KitItem[];
-    addItem: (item: EquipmentItem, qty?: number) => void;
+    addItem: (item: EquipmentItem, qty?: number, note?: string) => void;
     addCustomItem: (name: string, category: string, brand?: string, description?: string) => void;
     addItems: (items: EquipmentItem[]) => void;
     removeItem: (itemId: string) => void;
@@ -51,17 +51,17 @@ export function KitProvider({ children }: { children: ReactNode }) {
         cameraAssistant: ''
     });
 
-    const addItem = (equipment: EquipmentItem, qty: number = 1) => {
+    const addItem = (equipment: EquipmentItem, qty: number = 1, note: string = '') => {
         setItems(prev => {
             const existing = prev.find(i => i.item.id === equipment.id);
             if (existing) {
                 return prev.map(i =>
                     i.item.id === equipment.id
-                        ? { ...i, quantity: i.quantity + qty }
+                        ? { ...i, quantity: i.quantity + qty } // Note: we don't overwrite notes on simple add, or should we? keeping as is for now
                         : i
                 );
             }
-            return [...prev, { item: equipment, quantity: qty, notes: '' }];
+            return [...prev, { item: equipment, quantity: qty, notes: note }];
         });
     };
 
