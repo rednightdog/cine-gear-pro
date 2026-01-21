@@ -19,8 +19,41 @@ export default function PrintPage() {
     }, []);
 
     // Helper to print automatically or via button
-    const handlePrint = () => {
-        window.print();
+    const handlePrint = async () => {
+        // Try window.print first for desktop
+        if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            window.print();
+            return;
+        }
+
+        // Mobile / Fallback: Generate PDF from DOM
+        try {
+            const html2canvas = (await import('html2canvas')).default;
+            const jsPDF = (await import('jspdf')).default;
+
+            const element = document.getElementById('print-area');
+            if (!element) return;
+
+            const canvas = await html2canvas(element, {
+                scale: 2, // Retain quality
+                useCORS: true,
+                backgroundColor: '#FDF5E6'
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+            // A4 Dimensions in mm
+            const pdfWidth = 210;
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+            pdf.save(`${projectDetails.projectName || 'equipment-list'}.pdf`);
+        } catch (error) {
+            console.error('PDF generation failed:', error);
+            alert('PDF oluşturulamadı. Lütfen ekran görüntüsü almayı deneyin.');
+        }
     };
 
     if (!mounted) return null;
@@ -51,13 +84,13 @@ export default function PrintPage() {
                         onClick={handlePrint}
                         className="bg-[#1A1A1A] text-[#FDF5E6] px-4 py-2 rounded text-sm hover:bg-black transition-colors"
                     >
-                        Print / Save as PDF
+                        Save as PDF
                     </button>
                 </div>
             </div>
 
             {/* Main Page Content - A4 Ratio Approx */}
-            <div className={`max-w-[210mm] mx-auto bg-[#FDF5E6] relative min-h-[297mm] print:w-full print:max-w-none`}>
+            <div id="print-area" className={`max-w-[210mm] mx-auto bg-[#FDF5E6] relative min-h-[297mm] print:w-full print:max-w-none`}>
 
                 {/* Header Section */}
                 <header className="flex justify-between items-start mb-16 pt-12 print:pt-0">
